@@ -3,8 +3,8 @@ const db = require('../database/db')
 
 exports.store = async(req, res) => {
     const { email, password } = req.body;
+
     try {
-        console.log("oi")
         await db('admins').insert({
             email,
             password

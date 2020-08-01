@@ -20,6 +20,7 @@ exports.store = async(req, res) => {
 exports.index = async(req, res) => {
     try {
         const projects = await db('projects').select('id', 'name')
+            // get all of current user and add filter by name, admission_date and job_role
         res.send(projects).status(200)
     } catch (e) {
         res.send({ message: "Internal error", error: e }).status(500);

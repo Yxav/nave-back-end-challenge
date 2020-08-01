@@ -22,6 +22,7 @@ exports.store = async(req, res) => {
 
 
 exports.index = async(req, res) => {
+    // add filter by name and get all of current user
     try {
         const navers = await db('navers').select('id', 'name', 'birth_date', 'admission_date', 'job_role');
         res.send(navers).status(200)
