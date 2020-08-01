@@ -1,8 +1,21 @@
 const db = require('../database/db')
+const bcrypt = require('bcryptjs')
+
 
 
 exports.store = async(req, res) => {
-    const { email, password } = req.body;
+    let { email, password, confirm_password } = req.body;
+
+    const userExists = await db('admins')
+        .where('email', email)
+        .first()
+
+    if (userExists) {
+        console.log(userExists)
+        return res.json({ message: "This email was registered" }).status(204);
+    }
+
+    password = await bcrypt.hash(password, 10)
 
     try {
         await db('admins').insert({
@@ -17,5 +30,18 @@ exports.store = async(req, res) => {
 }
 
 exports.login = async(req, res) => {
-    // implantar jwt depois
+    const { email, password } = req.body;
+
+    const user = await db('admins')
+        .where('email', email)
+        .first()
+
+    if (!user) {
+        res.status(400).send({ message: "User doesn't exists" })
+    }
+
+    if (!await bcrypt.compare(password, user.password)) {
+        console.log("nao vai filhao")
+    }
+
 }
