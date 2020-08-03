@@ -46,7 +46,8 @@ exports.login = async(req, res) => {
         return
 
     }
-    res.status(200).send({ token: jwt.sign({ user: user }, variables.Security.secretKey, { expiresIn: 900 }) })
+    res.status(200).send({ token: jwt.sign({ user: user }, variables.Security.secretKey) })
+    console.log("falae")
 }
 
 exports.authenticate = async(req, res) => {
