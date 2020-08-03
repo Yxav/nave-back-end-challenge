@@ -13,12 +13,12 @@ exports.authorize = function(req, res, next) {
 
     try {
         var decoded = jwt.verify(token, variables.Security.secretKey);
-        console.log(decoded)
+        req.loggedUser = decoded;
         next()
     } catch (err) {
         console.log(err)
+        res.status(401).send({ message: "Invalid token" })
     }
-
 
 
 }
