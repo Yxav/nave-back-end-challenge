@@ -1,6 +1,7 @@
 const db = require('../database/db')
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-
+const variables = require("../bin/configuration/variables")
 
 
 exports.store = async(req, res) => {
@@ -38,10 +39,16 @@ exports.login = async(req, res) => {
 
     if (!user) {
         res.status(400).send({ message: "User doesn't exists" })
+        return
     }
-
     if (!await bcrypt.compare(password, user.password)) {
-        console.log("nao vai filhao")
+        res.status(400).send({ message: "Passwords doesn't match" })
+        return
+
     }
+    res.status(200).send({ token: jwt.sign({ user: user }, variables.Security.secretKey, { expiresIn: 900 }) })
+}
+
+exports.authenticate = async(req, res) => {
 
 }
