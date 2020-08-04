@@ -53,10 +53,9 @@ exports.login = async(req, res) => {
         return
     }
     if (!await bcrypt.compare(password, user.password)) {
-        res.status(400).send({ message: "Passwords doesn't match" })
+        res.status(400).send({ message: "Invalid password" })
         return
 
     }
     res.status(200).send({ token: jwt.sign({ user: user }, variables.Security.secretKey) })
-    console.log("falae")
 }
