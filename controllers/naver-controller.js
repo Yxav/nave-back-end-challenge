@@ -2,6 +2,7 @@ const db = require('../database/db')
 const jwt = require('jsonwebtoken')
 const auth = require("../middlewares/authenticate")
 const validator = require("../bin/helpers/validator-service")
+const knex = require('knex')
 
 exports.store = async(req, res) => {
 
@@ -14,26 +15,33 @@ exports.store = async(req, res) => {
     validate.isDate(birth_date);
     validate.isDate(admission_date);
     validate.isString(job_role);
-    validate.isArray(projects);
+
 
     if (!validate.isValid()) {
         res.status(400).send(validate.errors()).end();
-
         return;
     }
 
-    console.log(projects)
-
     try {
-        await db('navers').insert({
+        const naver = await db('navers').insert({
             name,
             birth_date,
             admission_date,
             job_role,
-            projects,
             id_admin
-        })
+        }, 'id')
 
+        if (projects) {
+            const id_naver = parseInt(naver)
+            for (var index_projects = 0; index_projects < projects.length; index_projects++) {
+                console.log("hahaha")
+                const data = {
+                    id_naver,
+                    id_project: projects[index_projects]
+                }
+                await db('project_navers').insert(data)
+            }
+        }
         console.table(req.body)
         res.send(req.body).status(200);
     } catch (e) {
@@ -62,12 +70,20 @@ exports.show = async(req, res) => {
 
     try {
         const naver = await db('navers')
-            .select('id', 'name', 'birth_date', 'admission_date', 'job_role', 'projects')
+            .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
             .where({
                 'id': id,
                 'id_admin': id_admin
             })
             .first()
+        console.log(naver.id)
+
+        const id_naver = naver.id
+
+
+        console.log(naver)
+
+
         res.send(naver).status(200)
 
     } catch (e) {
@@ -84,10 +100,10 @@ exports.update = async(req, res) => {
 
     let validate = new validator();
 
-    validate.isWord(name);
+    validate.isName(name);
     validate.isDate(birth_date);
     validate.isDate(admission_date);
-    validate.isWord(job_role);
+    validate.isString(job_role);
     validate.isArray(projects);
 
     if (!validate.isValid()) {

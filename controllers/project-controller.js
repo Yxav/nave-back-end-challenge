@@ -10,7 +10,6 @@ exports.store = async(req, res) => {
     let validate = new validator();
 
     validate.isString(name);
-    validate.isArray(navers);
 
     if (!validate.isValid()) {
         res.status(400).send(validate.errors()).end();
@@ -18,13 +17,25 @@ exports.store = async(req, res) => {
     }
 
     try {
-        await db('projects').insert({
+        const project = await db('projects').insert({
             name,
-            navers,
             id_admin
-        })
+        }, 'id')
+
+
+        if (navers) {
+            const id_project = parseInt(project)
+            for (var index_navers = 0; index_navers < navers.length; index_navers++) {
+                console.log("hahaha")
+                await db('project_navers').insert({
+                    id_naver: navers[index_navers],
+                    id_project,
+                })
+            }
+        }
 
         res.send({ message: "Project registered" }).status(200);
+
     } catch (e) {
         res.send({ message: "Internal error", error: e }).status(500);
     }
@@ -46,7 +57,7 @@ exports.show = async(req, res) => {
     const { id } = req.params
     const id_admin = req.loggedUser.user.id;
     try {
-        const project = await db('projects')
+        let project = await db('projects')
             .select('id', 'name', 'navers')
             .where({
                 'id': id,
@@ -67,26 +78,32 @@ exports.update = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
 
     let validate = new validator();
-
     validate.isString(name);
-    validate.isArray(navers);
+
 
     if (!validate.isValid()) {
         res.status(400).send(validate.errors()).end();
-
         return;
     }
 
+
     try {
-        await db('projects')
-            .where({
-                'id': id,
-                'id_admin': id_admin
-            })
-            .update({
-                name,
-                navers
-            })
+        const project = await db('projects').insert({
+            name,
+            id_admin
+        }, 'id')
+
+        if (navers) {
+            const id_project = parseInt(project)
+            for (var index_navers = 0; index_navers < navers.length; index_navers++) {
+                console.log("hahaha")
+                await db('project_navers').insert({
+                    id_naver: navers[index_navers],
+                    id_project,
+                })
+            }
+        }
+
         res.send({ message: "Updated" }).status(200)
 
     } catch (e) {
