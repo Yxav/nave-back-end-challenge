@@ -22,6 +22,8 @@ exports.store = async(req, res) => {
         return;
     }
 
+    console.log(projects)
+
     try {
         await db('navers').insert({
             name,
@@ -31,7 +33,8 @@ exports.store = async(req, res) => {
             projects,
             id_admin
         })
-        console.log(req.body)
+
+        console.table(req.body)
         res.send(req.body).status(200);
     } catch (e) {
         res.send({ message: "Internal error", error: e }).status(500);
@@ -41,7 +44,7 @@ exports.store = async(req, res) => {
 
 exports.index = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
-    console.log()
+
     try {
         const navers = await db('navers')
             .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
