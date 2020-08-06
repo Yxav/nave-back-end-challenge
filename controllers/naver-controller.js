@@ -45,10 +45,9 @@ exports.store = async(req, res) => {
         console.table(req.body)
         res.send(req.body).status(200);
     } catch (e) {
-        res.send({ message: "Internal error", error: e }).status(500);
+        res.status(500).send({ message: "Internal error", error: e });
     }
 }
-
 
 exports.index = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
@@ -59,7 +58,7 @@ exports.index = async(req, res) => {
             .where('id_admin', id_admin);
         res.send(navers).status(200)
     } catch (e) {
-        res.send({ message: "Internal error", error: e }).status(500);
+        res.status(500).send({ message: "Internal error", error: e });
 
     }
 }
@@ -95,7 +94,7 @@ exports.show = async(req, res) => {
         res.send(naver).status(200)
 
     } catch (e) {
-        res.send({ message: "Internal error", error: e }).status(500);
+        res.status(500).send({ message: "Internal error", error: e });
 
     }
 }
@@ -144,7 +143,7 @@ exports.update = async(req, res) => {
         }
         res.status(200).send(req.body);
     } catch (e) {
-        res.send({ message: "Internal error", error: e }).status(500);
+        res.status(500).send({ message: "Internal error", error: e });
     }
 }
 
@@ -163,6 +162,6 @@ exports.delete = async(req, res) => {
         res.send({ message: "Deleted" }).status(200)
 
     } catch (e) {
-        res.send({ message: "Internal error", error: e }).status(500);
+        res.status(500).send({ message: "Internal error", error: e });
     }
 }
