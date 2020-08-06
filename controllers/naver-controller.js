@@ -130,17 +130,20 @@ exports.update = async(req, res) => {
                 id_admin
             }, 'id')
 
-        if (projects) {
-            const id_naver = parseInt(naver)
-            for (var index_projects = 0; index_projects < projects.length; index_projects++) {
-                await db('project_navers')
-                    .where('id_naver', id_naver)
-                    .update({
-                        id_naver,
-                        id_project: projects[index_projects]
-                    })
-            }
+
+        const id_naver = parseInt(naver)
+        console.log(id_naver)
+        for (var index_projects = 0; index_projects < projects.length; index_projects++) {
+            var teste = await db('project_navers')
+                .where('id_naver', id_naver)
+                .update({
+                    // id_naver,
+                    id_project: projects[index_projects]
+                })
+            console.log(index_projects)
+            console.log(teste)
         }
+
         res.status(200).send(req.body);
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
