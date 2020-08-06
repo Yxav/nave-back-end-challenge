@@ -76,13 +76,21 @@ exports.show = async(req, res) => {
                 'id_admin': id_admin
             })
             .first()
-        console.log(naver.id)
-
-        const id_naver = naver.id
 
 
-        console.log(naver)
+        const project_id = await db('project_navers')
+            .select('id_project')
+            .where('id_naver', id)
 
+        naver.projects = []
+
+        for (var index_id = 0; index_id < project_id.length; index_id++) {
+
+            naver.projects.push(await db('projects')
+                .select('id', 'name')
+                .where('id', project_id[index_id].id_project)
+                .first())
+        }
 
         res.send(naver).status(200)
 
@@ -104,7 +112,6 @@ exports.update = async(req, res) => {
     validate.isDate(birth_date);
     validate.isDate(admission_date);
     validate.isString(job_role);
-    validate.isArray(projects);
 
     if (!validate.isValid()) {
         res.status(400).send(validate.errors()).end();
@@ -112,21 +119,27 @@ exports.update = async(req, res) => {
         return;
     }
 
-
     try {
 
-        const data = await db('navers')
-            .where({
-                'id': id,
-                'id_admin': id_admin
-            })
-            .update({
-                name,
-                birth_date,
-                admission_date,
-                job_role,
-                projects
-            })
+        const naver = await db('navers').update({
+            name,
+            birth_date,
+            admission_date,
+            job_role,
+            id_admin
+        }, 'id')
+
+        if (projects) {
+            const id_naver = parseInt(naver)
+            for (var index_projects = 0; index_projects < projects.length; index_projects++) {
+                console.log("hahaha")
+                const data = {
+                    id_naver,
+                    id_project: projects[index_projects]
+                }
+                await db('project_navers').insert(data)
+            }
+        }
         console.log(data)
         res.send({ message: "Successful update" }).status(200);
     } catch (e) {

@@ -58,12 +58,29 @@ exports.show = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
     try {
         let project = await db('projects')
-            .select('id', 'name', 'navers')
+            .select('id', 'name')
             .where({
                 'id': id,
                 'id_admin': id_admin
             })
             .first()
+
+        const naver_id = await db('project_navers')
+            .select('id_naver')
+            .where('id_project', id)
+
+
+        project.navers = []
+
+        for (var index_id = 0; index_id < naver_id.length; index_id++) {
+
+            project.navers.push(await db('navers')
+                .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
+                .where('id', naver_id[index_id].id_naver)
+                .first())
+
+
+        }
 
         res.send(project).status(200)
     } catch (e) {
@@ -88,7 +105,7 @@ exports.update = async(req, res) => {
 
 
     try {
-        const project = await db('projects').insert({
+        const project = await db('projects').update({
             name,
             id_admin
         }, 'id')
@@ -97,7 +114,7 @@ exports.update = async(req, res) => {
             const id_project = parseInt(project)
             for (var index_navers = 0; index_navers < navers.length; index_navers++) {
                 console.log("hahaha")
-                await db('project_navers').insert({
+                await db('project_navers').update({
                     id_naver: navers[index_navers],
                     id_project,
                 })
