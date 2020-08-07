@@ -51,11 +51,27 @@ exports.store = async(req, res) => {
 
 exports.index = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
+    const { name, admission_date, job_role } = req.query
+    let query = {}
+
+    if (name != null) {
+        query.name = name
+    }
+    if (admission_date != null) {
+        query.admission_date = admission_date
+    }
+    if (job_role != null) {
+        query.job_role = job_role
+    }
+    query.id_admin = id_admin
+    console.log(query)
+
+
 
     try {
         const navers = await db('navers')
             .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
-            .where('id_admin', id_admin);
+            .where(query);
         res.send(navers).status(200)
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
