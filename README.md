@@ -28,7 +28,7 @@ API construída com Node.JS, PostgreSQL, Express e Knex.
 
 
 ## Insomnia
-[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=back-end-challenge-nave&uri=olinkvaiaqui)
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=back-end-challenge-nave&uri=https://raw.githubusercontent.com/Yxav/nave-back-end-challenge/master/Insomnia.json?token=ALTR6P3W7VUOPJO62FIFZ5S7F3KRW)
 
 # Funcionalidades
 
