@@ -7,7 +7,6 @@
         "knex": "npx knex ",
         "start": " node server.js",
         "migrate_db": "knex migrate:latest"
-
     },
     "keywords": [
         "nodejs",
@@ -24,10 +23,7 @@
         "jsonwebtoken": "^8.5.1",
         "knex": "^0.21.2",
         "path": "^0.12.7",
-        "pg": "^8.3.0",
-        "v8n": "^1.3.3",
-        "valid.js": "^1.2.5",
-        "validate.js": "^0.13.1"
+        "pg": "^8.3.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.4"

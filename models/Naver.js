@@ -1,5 +1,4 @@
 const db = require('../database/db')
-const { async } = require('validate.js')
 
 
 exports.createNaver = async(data) => {
