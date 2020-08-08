@@ -4,6 +4,7 @@ const naverModel = require("../models/Naver")
 
 
 
+
 exports.store = async(req, res) => {
 
     const { name, navers } = req.body;
@@ -57,6 +58,11 @@ exports.index = async(req, res) => {
     try {
         const projects = await projectModel.index(query)
 
+        if (projects.length == 0) {
+            res.status(404).send({ message: "There aren't projects" })
+            return
+        }
+
         res.send(projects).status(200)
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
@@ -72,19 +78,23 @@ exports.show = async(req, res) => {
             'id_admin': id_admin
         })
 
-        const naver_id = await db('project_navers')
-            .select('id_naver')
-            .where('id_project', id)
-
-
-        project.navers = []
-
-        for (var index_id = 0; index_id < naver_id.length; index_id++) {
-
-            project.navers.push(await naverModel.show({ id: naver_id[index_id].id_naver }))
-
-
+        if (!project) {
+            res.status(404).send({ message: "Project not found" })
+            return
         }
+
+        const naver_id = await projectModel.getNaverProject({ id_project: id })
+
+        if (naver_id) {
+
+            project.navers = []
+
+            for (var index_id = 0; index_id < naver_id.length; index_id++) {
+
+                project.navers.push(await naverModel.show({ id: naver_id[index_id].id_naver }))
+            }
+        }
+
         res.status(200).send(project)
 
     } catch (e) {
@@ -99,6 +109,7 @@ exports.update = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
 
     let validate = new validator();
+
     validate.isString(name);
 
 
@@ -160,6 +171,7 @@ exports.update = async(req, res) => {
 }
 
 exports.delete = async(req, res) => {
+    
     const { id } = req.params
     const id_admin = req.loggedUser.user.id;
 

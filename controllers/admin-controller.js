@@ -21,7 +21,6 @@ exports.store = async(req, res) => {
     const userExists = await adminModel.checkUser({ email })
 
     if (userExists) {
-        console.log(userExists)
         return res.json({ message: "This email is already registered" }).status(204);
     }
 
@@ -43,7 +42,6 @@ exports.login = async(req, res) => {
     const { email, password } = req.body;
 
     const user = await adminModel.checkUser({ email })
-    console.log(user)
 
     if (!user) {
         res.status(400).send({ message: "User doesn't exists" })

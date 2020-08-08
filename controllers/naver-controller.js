@@ -3,16 +3,17 @@ const auth = require("../middlewares/authenticate")
 const validator = require("../bin/helpers/validator-service")
 const knex = require('knex')
 const naverModel = require("../models/Naver")
+const projectModel = require("../models/Project")
 
 exports.store = async(req, res) => {
 
-    const { name, birth_date, admission_date, job_role, projects } = req.body;
+    const { name, birthdate, admission_date, job_role, projects } = req.body;
     const id_admin = req.loggedUser.user.id;
 
     let validate = new validator();
 
     validate.isName(name);
-    validate.isDate(birth_date);
+    validate.isDate(birthdate);
     validate.isDate(admission_date);
     validate.isString(job_role);
 
@@ -25,7 +26,7 @@ exports.store = async(req, res) => {
     try {
         const naver = await naverModel.createNaver({
             name,
-            birth_date,
+            birthdate,
             admission_date,
             job_role,
             id_admin
@@ -66,6 +67,12 @@ exports.index = async(req, res) => {
 
     try {
         const navers = await naverModel.index(query)
+
+        if (navers.length == 0) {
+            res.status(404).send({ message: "There aren't navers" })
+            return
+        }
+
         res.send(navers).status(200)
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
@@ -83,6 +90,10 @@ exports.show = async(req, res) => {
             'id_admin': id_admin
         })
 
+        if (!naver) {
+            res.status(404).send({ message: "Naver not found" })
+            return
+        }
 
         const project_id = await naverModel.showProject({ 'id_naver': id })
 
@@ -91,10 +102,8 @@ exports.show = async(req, res) => {
 
         for (var index_id = 0; index_id < project_id.length; index_id++) {
 
-            naver.projects.push(await db('projects')
-                .select('id', 'name')
-                .where('id', project_id[index_id].id_project)
-                .first())
+            naver.projects.push(await projectModel.show({ id: project_id[index_id].id_project }))
+
         }
 
         res.send(naver).status(200)
@@ -108,13 +117,13 @@ exports.show = async(req, res) => {
 exports.update = async(req, res) => {
 
     const { id } = req.params;
-    const { name, birth_date, admission_date, job_role, projects } = req.body;
+    const { name, birthdate, admission_date, job_role, projects } = req.body;
     const id_admin = req.loggedUser.user.id;
 
     let validate = new validator();
 
     validate.isName(name);
-    validate.isDate(birth_date);
+    validate.isDate(birthdate);
     validate.isDate(admission_date);
     validate.isString(job_role);
 
@@ -128,7 +137,7 @@ exports.update = async(req, res) => {
         const data = {
             content: {
                 name,
-                birth_date,
+                birthdate,
                 admission_date,
                 job_role,
                 id_admin
@@ -159,10 +168,7 @@ exports.update = async(req, res) => {
         await naverModel.deleteNaversProject({ id_naver: id })
 
         for (var index_projects = 0; index_projects < projects.length; index_projects++) {
-            console.log({
-                id_naver,
-                id_project: projects[index_projects]
-            })
+
             await naverModel.createProjectNaver({
                 id_naver,
                 id_project: projects[index_projects]

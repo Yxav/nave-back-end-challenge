@@ -2,7 +2,6 @@ const db = require('../database/db')
 
 
 exports.create = async(data) => {
-    console.log(data)
     await db('admins').insert(data)
 }
 

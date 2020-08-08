@@ -16,7 +16,6 @@ exports.authorize = function(req, res, next) {
         req.loggedUser = decoded;
         next()
     } catch (err) {
-        console.log(err)
         res.status(401).send({ message: "Invalid token" })
     }
 

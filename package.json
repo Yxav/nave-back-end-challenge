@@ -6,7 +6,7 @@
     "scripts": {
         "knex": "npx knex ",
         "start": " node server.js",
-        "db_migrate": "npx knex migrate:latest"
+        "migrate_db": "knex migrate:latest"
 
     },
     "keywords": [

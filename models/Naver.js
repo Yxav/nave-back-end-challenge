@@ -13,13 +13,13 @@ exports.createProjectNaver = async(data) => {
 
 exports.index = async(data) => {
     return await db('navers')
-        .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
+        .select('id', 'name', 'birthdate', 'admission_date', 'job_role')
         .where(data);
 }
 
 exports.show = async(data) => {
     return await db('navers')
-        .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
+        .select('id', 'name', 'birthdate', 'admission_date', 'job_role')
         .where(data)
         .first()
 }

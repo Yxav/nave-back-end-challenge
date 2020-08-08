@@ -23,7 +23,7 @@ API construída com Node.JS, PostgreSQL, Express e Knex.
 - CREATE DATABASE navedex
 - GRANT ALL PRIVILEGES ON DATABASE navedex to admin
 
-2. Execute o código de migrações: `npm db_migrate`
+2. Execute o código de migrações: `npm run migrate_db`
 3. Execute o código para rodar o projeto: `npm start`
 
 
