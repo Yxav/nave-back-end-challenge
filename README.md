@@ -12,9 +12,9 @@ API construída com Node.JS, PostgreSQL, Express e Knex.
 # Antes de começar
 ## Instalação
 
-1.Instale o Node, na versão LTS;
-2.Instale o banco de dados PostgreSQL;
-3.Instale as dependências usando o yarn ou npm:  `npm install` ou ` yarn`;
+1. Instale o Node, na versão LTS;
+2. Instale o banco de dados PostgreSQL;
+3. Instale as dependências usando o yarn ou npm:  `npm install` ou ` yarn`;
 
 
 ## Antes de rodar:
