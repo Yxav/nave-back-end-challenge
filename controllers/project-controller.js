@@ -1,4 +1,3 @@
-const db = require('../database/db')
 const validator = require("../bin/helpers/validator-service")
 const projectModel = require("../models/Project")
 const naverModel = require("../models/Naver")
@@ -118,11 +117,15 @@ exports.update = async(req, res) => {
             condition: {
                 id: id
             }
-
         })
 
-        if (navers) {
-            const id_project = parseInt(project)
+        const naversArr = await naverModel.showProject({ id_project: id })
+
+
+        const id_project = parseInt(project)
+
+        if (navers.length == naversArr.length) {
+
             for (var index_navers = 0; index_navers < navers.length; index_navers++) {
                 await naverModel.updateProject({
                     condition: {
@@ -133,8 +136,16 @@ exports.update = async(req, res) => {
                         id_project,
                     }
                 })
-
             }
+        }
+
+        await naverModel.deleteNaversProject({ id_project: id })
+
+        for (var index_navers = 0; index_navers < navers.length; index_navers++) {
+            await naverModel.createProjectNaver({
+                id_naver: navers[index_navers],
+                id_project,
+            })
         }
 
 

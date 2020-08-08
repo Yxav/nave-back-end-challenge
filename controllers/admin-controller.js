@@ -22,7 +22,7 @@ exports.store = async(req, res) => {
 
     if (userExists) {
         console.log(userExists)
-        return res.json({ message: "This email was registered" }).status(204);
+        return res.json({ message: "This email is already registered" }).status(204);
     }
 
     password = await bcrypt.hash(password, 10)

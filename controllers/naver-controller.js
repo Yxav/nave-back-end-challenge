@@ -1,5 +1,3 @@
-const db = require('../database/db')
-
 const jwt = require('jsonwebtoken')
 const auth = require("../middlewares/authenticate")
 const validator = require("../bin/helpers/validator-service")
@@ -141,20 +139,39 @@ exports.update = async(req, res) => {
         }
         const naver = await naverModel.update(data)
 
-
         const id_naver = parseInt(naver)
 
+        const arrProject = await naverModel.showProject({ id_naver: id })
+
+        if (projects.length == arrProject.length) {
+            for (var index_projects = 0; index_projects < projects.length; index_projects++) {
+                await naverModel.updateProject({
+                    context: {
+                        id_project: projects[index_projects]
+                    },
+                    condition: {
+                        'id_naver': id_naver
+                    }
+                })
+            }
+        }
+
+        await naverModel.deleteNaversProject({ id_naver: id })
 
         for (var index_projects = 0; index_projects < projects.length; index_projects++) {
-            var teste = await naverModel.updateProject({
-                context: {
-                    id_project: projects[index_projects]
-                },
-                condition: {
-                    'id_naver': id_naver
-                }
+            console.log({
+                id_naver,
+                id_project: projects[index_projects]
+            })
+            await naverModel.createProjectNaver({
+                id_naver,
+                id_project: projects[index_projects]
             })
         }
+
+
+
+
         res.status(200).send(req.body);
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });

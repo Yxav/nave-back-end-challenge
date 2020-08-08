@@ -3,15 +3,21 @@
 Solução do desafio proposto pela Nave, para a vaga de desenvolvedor Back-end NodeJS.
 API construída com Node.JS, PostgreSQL, Express e Knex.
 
+## Conteúdo
+
+
+
+
+
 # Antes de começar
-##Instalação
+## Instalação
 
 1.Instale o Node, na versão LTS;
 2.Instale o banco de dados PostgreSQL;
 3.Instale as dependências usando o yarn ou npm:  `npm install` ou ` yarn`;
 
 
-##Antes de rodar:
+## Antes de rodar:
 1. Será necessário criar um banco de dados, com os comandos abaixo:
 - CREATE USER admin WITH PASSWORD admin
 - CREATE DATABASE navedex
@@ -21,342 +27,463 @@ API construída com Node.JS, PostgreSQL, Express e Knex.
 3. Execute o código para rodar o projeto: `npm start`
 
 
-colocar:
- directory structure 
-"run insomnia"
-e isso:
-Show User
-Returns json data about a single user.
+## Insomnia
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=back-end-challenge-nave&uri=olinkvaiaqui)
 
-URL
+# Funcionalidades
 
-/users/:id
+## Usuário/Administrador
 
-Method:
+### Signup
 
+* **URL**
+   /api/register
+
+* **Method**
+POST
+
+* **Data**
+
+```json
+{
+"email":"teste@email.com",
+"password":"123teste",
+"confirm_password":"123teste"
+}
+```
+
+
+#### Success Response
+
+```json
+{
+  "message": "Successful register"
+}
+```
+ #### Failed Response
+Se existir um usuário registrado:
+
+```json
+{
+  "message": "This email is already registered"
+}
+```
+
+Se o email informado for inválido:
+
+```json 
+[
+  {
+    "message": "This value must be a valid email"
+  }
+]
+```
+
+### Login
+
+* **URL**
+   /api/login
+
+* **Method**
+POST
+
+* **Data**
+
+```json
+{
+"email":"teste@email.com",
+"password":"123teste",
+}
+```
+
+#### Success Response
+
+```json
+{
+  "token": token
+}
+```
+ #### Failed Response
+Se o usuário não existir:
+
+```json
+{
+  "message": "User doesn't exists"
+}
+```
+
+Se a senha informada estiver incorreta:
+
+```json
+  {
+  "message": "Invalid password"
+  }
+  ```
+
+## Navers
+
+### Create
+
+**Necessário token**
+
+* **URL**
+   /api/admin/naver/register
+
+* **Method**
+POST
+
+* **Data**
+
+```json
+{
+	"name": "Fulano",
+	"birth_date": "2000-05-10",
+	"admission_date": "2020-08-20",
+	"job_role": "Developer",
+	"projects": [1]
+}
+```
+
+
+#### Success Response
+
+```json
+{
+    "name": "Fulano",
+	"birth_date": "2000-05-10",
+	"admission_date": "2020-08-20",
+	"job_role": "Developer",
+	"projects": [1]
+}
+```
+ #### Failed Response
+Se os dados informados são inválidos:
+
+```json
+[
+  {
+    "message": "This value must be a string"
+  },
+  {
+    "message": "This value must be a valid date"
+  }
+]
+```
+
+
+### Index
+**Necessário token**
+
+* **URL**
+   /api/admin/naver
+
+* **Method**
 GET
 
-URL Params
-
-Required:
-
-id=[integer]
-
-Data Params
-
-None
-
-Success Response:
-
-Code: 200
-Content: { id : 12, name : "Michael Bloom" }
-Error Response:
-
-Code: 404 NOT FOUND
-Content: { error : "User doesn't exist" }
-OR
-
-Code: 401 UNAUTHORIZED
-Content: { error : "You are unauthorized to make this request." }
 
 
-**Table of Contents**
+#### Success Response
 
-[TOCM]
+```json
+[
+    {
+	"name": "Fulano",
+	"birth_date": "2000-05-10",
+	"admission_date": "2020-08-20",
+	"job_role": "Developer",
+	"projects": [1]
+    }
+]
+```
+ #### Failed Response
+Se o token for inválido:
 
-[TOC]
-
-
-
-###H3 header
-####H4 header
-#####H5 header
-######H6 header
-#Heading 1 link [Heading link](https://github.com/pandao/editor.md "Heading link")
-##Heading 2 link [Heading link](https://github.com/pandao/editor.md "Heading link")
-###Heading 3 link [Heading link](https://github.com/pandao/editor.md "Heading link")
-####Heading 4 link [Heading link](https://github.com/pandao/editor.md "Heading link") Heading link [Heading link](https://github.com/pandao/editor.md "Heading link")
-#####Heading 5 link [Heading link](https://github.com/pandao/editor.md "Heading link")
-######Heading 6 link [Heading link](https://github.com/pandao/editor.md "Heading link")
-
-##Headers (Underline)
-
-H1 Header (Underline)
-=============
-
-H2 Header (Underline)
--------------
-
-###Characters
-                
-----
-
-~~Strikethrough~~ <s>Strikethrough (when enable html tag decode.)</s>
-*Italic*      _Italic_
-**Emphasis**  __Emphasis__
-***Emphasis Italic*** ___Emphasis Italic___
-
-Superscript: X<sub>2</sub>，Subscript: O<sup>2</sup>
-
-**Abbreviation(link HTML abbr tag)**
-
-The <abbr title="Hyper Text Markup Language">HTML</abbr> specification is maintained by the <abbr title="World Wide Web Consortium">W3C</abbr>.
-
-###Blockquotes
-
-> Blockquotes
-
-Paragraphs and Line Breaks
-                    
-> "Blockquotes Blockquotes", [Link](http://localhost/)。
-
-###Links
-
-[Links](http://localhost/)
-
-[Links with title](http://localhost/ "link title")
-
-`<link>` : <https://github.com>
-
-[Reference link][id/name] 
-
-[id/name]: http://link-url/
-
-GFM a-tail link @pandao
-
-###Code Blocks (multi-language) & highlighting
-
-####Inline code
-
-`$ npm install marked`
-
-####Code Blocks (Indented style)
-
-Indented 4 spaces, like `<pre>` (Preformatted Text).
-
-    <?php
-        echo "Hello world!";
-    ?>
-    
-Code Blocks (Preformatted text):
-
-    | First Header  | Second Header |
-    | ------------- | ------------- |
-    | Content Cell  | Content Cell  |
-    | Content Cell  | Content Cell  |
-
-####Javascript　
-
-```javascript
-function test(){
-	console.log("Hello world!");
+```json
+{
+  "message": "Invalid token"
 }
- 
-(function(){
-    var box = function(){
-        return box.fn.init();
-    };
-
-    box.prototype = box.fn = {
-        init : function(){
-            console.log('box.init()');
-
-			return this;
-        },
-
-		add : function(str){
-			alert("add", str);
-
-			return this;
-		},
-
-		remove : function(str){
-			alert("remove", str);
-
-			return this;
-		}
-    };
-    
-    box.fn.init.prototype = box.fn;
-    
-    window.box =box;
-})();
-
-var testBox = box();
-testBox.add("jQuery").remove("jQuery");
 ```
 
-####HTML code
+### Show
+**Necessário token**
 
-```html
-<!DOCTYPE html>
-<html>
-    <head>
-        <mate charest="utf-8" />
-        <title>Hello world!</title>
-    </head>
-    <body>
-        <h1>Hello world!</h1>
-    </body>
-</html>
+* **URL**
+   /api/admin/naver:id
+
+* **Query search**
+?name
+?admission_date
+?job_role
+
+* **Method**
+GET
+
+
+#### Success Response
+
+```json
+{
+	"name": "Fulano",
+	"birth_date": "2000-05-10",
+	"admission_date": "2020-08-20",
+	"job_role": "Developer",
+	"projects": [1]
+}
+```
+ #### Failed Response
+
+```json
+{
+  "message": "Internal error",
+  "error": {}
+}
 ```
 
-###Images
+### Update
+**Necessário token**
 
-Image:
+* **URL**
+   /api/admin/naver:id
 
-![](https://pandao.github.io/editor.md/examples/images/4.jpg)
 
-> Follow your heart.
+* **Method**
+POST
 
-![](https://pandao.github.io/editor.md/examples/images/8.jpg)
 
-> 图为：厦门白城沙滩 Xiamen
+#### Success Response
 
-图片加链接 (Image + Link)：
+```json
+{
+  "name": "Fulano",
+	"birth_date": "2000-05-10",
+	"admission_date": "2020-08-20",
+	"job_role": "Developer",
+	"projects": [
+    {
+      "id": 1,
+      "name": "Projeto Legal"
+    }
+  ]
+}
+```
+ #### Failed Response
 
-[![](https://pandao.github.io/editor.md/examples/images/7.jpg)](https://pandao.github.io/editor.md/examples/images/7.jpg "李健首张专辑《似水流年》封面")
+Se os dados informados são inválidos:
 
-> 图为：李健首张专辑《似水流年》封面
-                
-----
-
-###Lists
-
-####Unordered list (-)
-
-- Item A
-- Item B
-- Item C
-     
-####Unordered list (*)
-
-* Item A
-* Item B
-* Item C
-
-####Unordered list (plus sign and nested)
-                
-+ Item A
-+ Item B
-    + Item B 1
-    + Item B 2
-    + Item B 3
-+ Item C
-    * Item C 1
-    * Item C 2
-    * Item C 3
-
-####Ordered list
-                
-1. Item A
-2. Item B
-3. Item C
-                
-----
-                    
-###Tables
-                    
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell 
-
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-
-| Function name | Description                    |
-| ------------- | ------------------------------ |
-| `help()`      | Display the help window.       |
-| `destroy()`   | **Destroy your computer!**     |
-
-| Item      | Value |
-| --------- | -----:|
-| Computer  | $1600 |
-| Phone     |   $12 |
-| Pipe      |    $1 |
-
-| Left-Aligned  | Center Aligned  | Right Aligned |
-| :------------ |:---------------:| -----:|
-| col 3 is      | some wordy text | $1600 |
-| col 2 is      | centered        |   $12 |
-| zebra stripes | are neat        |    $1 |
-                
-----
-
-####HTML entities
-
-&copy; &  &uml; &trade; &iexcl; &pound;
-&amp; &lt; &gt; &yen; &euro; &reg; &plusmn; &para; &sect; &brvbar; &macr; &laquo; &middot; 
-
-X&sup2; Y&sup3; &frac34; &frac14;  &times;  &divide;   &raquo;
-
-18&ordm;C  &quot;  &apos;
-
-##Escaping for Special Characters
-
-\*literal asterisks\*
-
-##Markdown extras
-
-###GFM task list
-
-- [x] GFM task list 1
-- [x] GFM task list 2
-- [ ] GFM task list 3
-    - [ ] GFM task list 3-1
-    - [ ] GFM task list 3-2
-    - [ ] GFM task list 3-3
-- [ ] GFM task list 4
-    - [ ] GFM task list 4-1
-    - [ ] GFM task list 4-2
-
-###Emoji mixed :smiley:
-
-> Blockquotes :star:
-
-####GFM task lists & Emoji & fontAwesome icon emoji & editormd logo emoji :editormd-logo-5x:
-
-- [x] :smiley: @mentions, :smiley: #refs, [links](), **formatting**, and <del>tags</del> supported :editormd-logo:;
-- [x] list syntax required (any unordered or ordered list supported) :editormd-logo-3x:;
-- [x] [ ] :smiley: this is a complete item :smiley:;
-- [ ] []this is an incomplete item [test link](#) :fa-star: @pandao; 
-- [ ] [ ]this is an incomplete item :fa-star: :fa-gear:;
-    - [ ] :smiley: this is an incomplete item [test link](#) :fa-star: :fa-gear:;
-    - [ ] :smiley: this is  :fa-star: :fa-gear: an incomplete item [test link](#);
-            
-###TeX(LaTeX)
-   
-$$E=mc^2$$
-
-Inline $$E=mc^2$$ Inline，Inline $$E=mc^2$$ Inline。
-
-$$\(\sqrt{3x-1}+(1+x)^2\)$$
-                    
-$$\sin(\alpha)^{\theta}=\sum_{i=0}^{n}(x^i + \cos(f))$$
-                
-###FlowChart
-
-```flow
-st=>start: Login
-op=>operation: Login operation
-cond=>condition: Successful Yes or No?
-e=>end: To admin
-
-st->op->cond
-cond(yes)->e
-cond(no)->op
+```json
+[
+  {
+    "message": "This value must be a string"
+  },
+  {
+    "message": "This value must be a valid date"
+  }
+]
 ```
 
-###Sequence Diagram
-                    
-```seq
-Andrew->China: Says Hello 
-Note right of China: China thinks\nabout it 
-China-->Andrew: How are you? 
-Andrew->>China: I am good thanks!
+### Delete
+**Necessário token**
+
+* **URL**
+   /api/admin/naver:id
+
+
+* **Method**
+POST
+
+
+#### Success Response
+
+```json
+{
+  "message": "Deleted"
+}
+```
+ #### Failed Response
+
+```json
+{
+  "message": "Internal error",
+  "error": {}
+}
 ```
 
-###End
+
+
+
+
+
+
+## Projects
+
+### Create
+
+**Necessário token**
+
+* **URL**
+   /api/admin/projects/register
+
+* **Method**
+POST
+
+* **Data**
+
+```json
+{
+	"name":"Projeto Legal",
+	"navers": [1]
+}
+```
+
+
+#### Success Response
+
+```json
+{
+	"name":"Projeto Legal",
+	"navers": [1]
+}
+```
+ #### Failed Response
+Se os dados informados são inválidos:
+
+```json
+[
+  {
+    "message": "This value must be a string"
+  },
+]
+```
+
+
+### Index
+**Necessário token**
+
+* **URL**
+   /api/admin/projects
+
+* **Method**
+GET
+
+
+#### Success Response
+
+```json
+[
+    {
+    "id": 10,
+	"name":"Projeto Legal",
+    }
+]
+```
+ #### Failed Response
+Se o token for inválido:
+
+```json
+{
+  "message": "Invalid token"
+}
+```
+
+### Show
+**Necessário token**
+
+* **URL**
+  /api/admin/projects:id
+
+* **Query search**
+?name
+
+* **Method**
+GET
+
+
+#### Success Response
+
+```json
+{
+  "id": 1,
+  "name": "Projeto Legal",
+  "navers": [
+        {
+	"name": "Fulano",
+	"birth_date": "2000-05-10",
+	"admission_date": "2020-08-20",
+	"job_role": "Developer",
+        }
+  ]
+}
+```
+ #### Failed Response
+
+```json
+{
+  "message": "Internal error",
+  "error": {}
+}
+```
+
+### Update
+**Necessário token**
+
+* **URL**
+  /api/admin/projects:id
+
+
+* **Method**
+POST
+
+ * **Data**
+```json
+{
+	"name":"Projeto Legal",
+	"navers": [2]
+}
+```
+
+#### Success Response
+
+```json
+{
+	"name":"Projeto Legal",
+	"navers": [2]
+}
+```
+ #### Failed Response
+
+Se os dados informados são inválidos:
+
+```json
+[
+  {
+    "message": "This value must be a string"
+  }
+]
+```
+
+### Delete
+**Necessário token**
+
+* **URL**
+    /api/admin/projects/:id
+
+
+* **Method**
+POST
+
+
+#### Success Response
+
+```json
+{
+  "message": "Deleted"
+}
+```
+ #### Failed Response
+
+```json
+{
+  "message": "Internal error",
+  "error": {}
+}
+```

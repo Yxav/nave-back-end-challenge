@@ -32,8 +32,7 @@ exports.showProject = async(data) => {
 }
 
 exports.update = async(data) => {
-    return
-    await db('navers')
+    return await db('navers')
         .where(data.id)
         .update(data.content, 'id')
 }
@@ -47,6 +46,13 @@ exports.updateProject = async(data) => {
 
 exports.delete = async(data) => {
     await db('navers')
+        .where(data)
+        .first()
+        .delete()
+}
+
+exports.deleteNaversProject = async(data) => {
+    await db('project_navers')
         .where(data)
         .first()
         .delete()

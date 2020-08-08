@@ -5,7 +5,9 @@
     "main": "index.js",
     "scripts": {
         "knex": "npx knex ",
-        "start": " npx nodemon server.js"
+        "start": " node server.js",
+        "db_migrate": "npx knex migrate:latest"
+
     },
     "keywords": [
         "nodejs",
