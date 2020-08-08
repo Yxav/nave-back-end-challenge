@@ -175,8 +175,9 @@ exports.update = async(req, res) => {
             })
         }
 
-
-
+        if (naver.length == 0) {
+            throw error;
+        }
 
         res.status(200).send(req.body);
     } catch (e) {

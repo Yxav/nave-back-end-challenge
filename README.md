@@ -203,6 +203,13 @@ Se o token for inválido:
   "message": "Invalid token"
 }
 ```
+Se não houver cadastros:
+
+```json
+{
+  "message": "There aren't navers"
+}
+```
 
 ### Show
 **Necessário token**
@@ -231,6 +238,14 @@ GET
 }
 ```
  #### Failed Response
+
+Se o id informado não existe na base de dados
+
+ ```json
+{
+  "message": "Naver not found"
+}
+```
 
 ```json
 {
@@ -384,6 +399,13 @@ Se o token for inválido:
   "message": "Invalid token"
 }
 ```
+Se não houver projetos
+
+ ```json
+{
+  "message": "There aren't projects"
+}
+```
 
 ### Show
 **Necessário token**
@@ -422,6 +444,15 @@ GET
   "error": {}
 }
 ```
+Se o id do projeto não existir na base de dados
+
+```json
+{
+  "message": "Project not found"
+}
+```
+
+
 
 ### Update
 **Necessário token**

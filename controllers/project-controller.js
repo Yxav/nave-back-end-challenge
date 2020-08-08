@@ -159,6 +159,9 @@ exports.update = async(req, res) => {
             })
         }
 
+        if (project.length == 0) {
+            throw error;
+        }
 
         res.status(200).send(req.body);
 
@@ -171,7 +174,7 @@ exports.update = async(req, res) => {
 }
 
 exports.delete = async(req, res) => {
-    
+
     const { id } = req.params
     const id_admin = req.loggedUser.user.id;
 
