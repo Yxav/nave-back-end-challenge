@@ -1,8 +1,8 @@
-const db = require('../database/db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const variables = require("../bin/configuration/variables")
 const validator = require("../bin/helpers/validator-service")
+const adminModel = require("../models/Admin")
 
 
 
@@ -18,9 +18,7 @@ exports.store = async(req, res) => {
         return;
     }
 
-    const userExists = await db('admins')
-        .where('email', email)
-        .first()
+    const userExists = await adminModel.checkUser({ email })
 
     if (userExists) {
         console.log(userExists)
@@ -30,7 +28,7 @@ exports.store = async(req, res) => {
     password = await bcrypt.hash(password, 10)
 
     try {
-        await db('admins').insert({
+        adminModel.create({
             email,
             password
         })
@@ -44,9 +42,8 @@ exports.store = async(req, res) => {
 exports.login = async(req, res) => {
     const { email, password } = req.body;
 
-    const user = await db('admins')
-        .where('email', email)
-        .first()
+    const user = await adminModel.checkUser({ email })
+    console.log(user)
 
     if (!user) {
         res.status(400).send({ message: "User doesn't exists" })
@@ -57,5 +54,5 @@ exports.login = async(req, res) => {
         return
 
     }
-    res.status(200).send({ token: jwt.sign({ user: user }, variables.Security.secretKey) })
+    res.status(200).send({ token: jwt.sign({ user }, variables.Security.secretKey) })
 }

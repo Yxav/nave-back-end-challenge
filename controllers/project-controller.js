@@ -1,5 +1,8 @@
 const db = require('../database/db')
 const validator = require("../bin/helpers/validator-service")
+const projectModel = require("../models/Project")
+const naverModel = require("../models/Naver")
+
 
 
 exports.store = async(req, res) => {
@@ -17,17 +20,16 @@ exports.store = async(req, res) => {
     }
 
     try {
-        const project = await db('projects').insert({
+        const project = await projectModel.create({
             name,
             id_admin
-        }, 'id')
+        })
 
 
         if (navers) {
             const id_project = parseInt(project)
             for (var index_navers = 0; index_navers < navers.length; index_navers++) {
-                console.log("hahaha")
-                await db('project_navers').insert({
+                await naverModel.createProjectNaver({
                     id_naver: navers[index_navers],
                     id_project,
                 })
@@ -44,10 +46,17 @@ exports.store = async(req, res) => {
 
 exports.index = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
+    const { name } = req.query
+    let query = {}
+
+    query.id_admin = id_admin
+
+    if (name != null) {
+        query.name = name
+    }
+
     try {
-        const projects = await db('projects')
-            .select('id', 'name')
-            .where('id_admin', id_admin)
+        const projects = await projectModel.index(query)
 
         res.send(projects).status(200)
     } catch (e) {
@@ -59,13 +68,10 @@ exports.show = async(req, res) => {
     const { id } = req.params
     const id_admin = req.loggedUser.user.id;
     try {
-        let project = await db('projects')
-            .select('id', 'name')
-            .where({
-                'id': id,
-                'id_admin': id_admin
-            })
-            .first()
+        let project = await projectModel.show({
+            'id': id,
+            'id_admin': id_admin
+        })
 
         const naver_id = await db('project_navers')
             .select('id_naver')
@@ -76,10 +82,7 @@ exports.show = async(req, res) => {
 
         for (var index_id = 0; index_id < naver_id.length; index_id++) {
 
-            project.navers.push(await db('navers')
-                .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
-                .where('id', naver_id[index_id].id_naver)
-                .first())
+            project.navers.push(await naverModel.show({ id: naver_id[index_id].id_naver }))
 
 
         }
@@ -107,23 +110,30 @@ exports.update = async(req, res) => {
 
 
     try {
-        const project = await db('projects')
-            .where('id', id)
-            .update({
+        const project = await projectModel.update({
+            context: {
                 name,
                 id_admin
-            }, 'id')
+            },
+            condition: {
+                id: id
+            }
+
+        })
 
         if (navers) {
             const id_project = parseInt(project)
             for (var index_navers = 0; index_navers < navers.length; index_navers++) {
-                console.log("hahaha")
-                await db('project_navers')
-                    .where('id_project', id_project)
-                    .update({
+                await naverModel.updateProject({
+                    condition: {
+                        id_project: id_project
+                    },
+                    context: {
                         id_naver: navers[index_navers],
                         id_project,
-                    })
+                    }
+                })
+
             }
         }
 
@@ -144,13 +154,10 @@ exports.delete = async(req, res) => {
 
 
     try {
-        await db('projects')
-            .where({
-                'id': id,
-                'id_admin': id_admin
-            })
-            .first()
-            .delete()
+        await projectModel.delete({
+            'id': id,
+            'id_admin': id_admin
+        })
         res.send({ message: "Deleted" }).status(200)
 
     } catch (e) {

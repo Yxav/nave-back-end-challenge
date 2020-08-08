@@ -1,8 +1,10 @@
 const db = require('../database/db')
+
 const jwt = require('jsonwebtoken')
 const auth = require("../middlewares/authenticate")
 const validator = require("../bin/helpers/validator-service")
 const knex = require('knex')
+const naverModel = require("../models/Naver")
 
 exports.store = async(req, res) => {
 
@@ -23,26 +25,23 @@ exports.store = async(req, res) => {
     }
 
     try {
-        const naver = await db('navers').insert({
+        const naver = await naverModel.createNaver({
             name,
             birth_date,
             admission_date,
             job_role,
             id_admin
-        }, 'id')
+        })
 
         if (projects) {
             const id_naver = parseInt(naver)
             for (var index_projects = 0; index_projects < projects.length; index_projects++) {
-                console.log("hahaha")
-                const data = {
+                await naverModel.createProjectNaver({
                     id_naver,
                     id_project: projects[index_projects]
-                }
-                await db('project_navers').insert(data)
+                })
             }
         }
-        console.table(req.body)
         res.send(req.body).status(200);
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
@@ -54,24 +53,21 @@ exports.index = async(req, res) => {
     const { name, admission_date, job_role } = req.query
     let query = {}
 
+    query.id_admin = id_admin
+
+
     if (name != null) {
-        query.name = name
+        query.name = name;
     }
     if (admission_date != null) {
-        query.admission_date = admission_date
+        query.admission_date = admission_date;
     }
     if (job_role != null) {
-        query.job_role = job_role
+        query.job_role = job_role;
     }
-    query.id_admin = id_admin
-    console.log(query)
-
-
 
     try {
-        const navers = await db('navers')
-            .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
-            .where(query);
+        const navers = await naverModel.index(query)
         res.send(navers).status(200)
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
@@ -84,18 +80,14 @@ exports.show = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
 
     try {
-        const naver = await db('navers')
-            .select('id', 'name', 'birth_date', 'admission_date', 'job_role')
-            .where({
-                'id': id,
-                'id_admin': id_admin
-            })
-            .first()
+        const naver = await naverModel.show({
+            'id': id,
+            'id_admin': id_admin
+        })
 
 
-        const project_id = await db('project_navers')
-            .select('id_project')
-            .where('id_naver', id)
+        const project_id = await naverModel.showProject({ 'id_naver': id })
+
 
         naver.projects = []
 
@@ -135,31 +127,34 @@ exports.update = async(req, res) => {
     }
 
     try {
-
-        const naver = await db('navers')
-            .where('id', id)
-            .update({
+        const data = {
+            content: {
                 name,
                 birth_date,
                 admission_date,
                 job_role,
                 id_admin
-            }, 'id')
+            },
+            id: {
+                'id': id
+            }
+        }
+        const naver = await naverModel.update(data)
 
 
         const id_naver = parseInt(naver)
-        console.log(id_naver)
-        for (var index_projects = 0; index_projects < projects.length; index_projects++) {
-            var teste = await db('project_navers')
-                .where('id_naver', id_naver)
-                .update({
-                    // id_naver,
-                    id_project: projects[index_projects]
-                })
-            console.log(index_projects)
-            console.log(teste)
-        }
 
+
+        for (var index_projects = 0; index_projects < projects.length; index_projects++) {
+            var teste = await naverModel.updateProject({
+                context: {
+                    id_project: projects[index_projects]
+                },
+                condition: {
+                    'id_naver': id_naver
+                }
+            })
+        }
         res.status(200).send(req.body);
     } catch (e) {
         res.status(500).send({ message: "Internal error", error: e });
@@ -171,13 +166,11 @@ exports.delete = async(req, res) => {
     const id_admin = req.loggedUser.user.id;
 
     try {
-        const naver = await db('navers')
-            .where({
-                'id': id,
-                'id_admin': id_admin
-            })
-            .first()
-            .delete()
+        await naverModel.delete({
+            'id': id,
+            'id_admin': id_admin
+        })
+
         res.send({ message: "Deleted" }).status(200)
 
     } catch (e) {
