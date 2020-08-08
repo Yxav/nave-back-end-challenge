@@ -4,7 +4,6 @@
     "description": "Nave backend challenge for job ",
     "main": "index.js",
     "scripts": {
-        "knex": "npx knex ",
         "start": " node server.js",
         "migrate_db": "knex migrate:latest"
     },
