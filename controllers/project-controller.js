@@ -1,6 +1,5 @@
 const validator = require("../bin/helpers/validator-service")
-const projectModel = require("../models/Project")
-const naverModel = require("../models/Naver")
+const Project = require("../models/Project")
 
 
 
@@ -20,21 +19,12 @@ exports.store = async(req, res) => {
     }
 
     try {
-        const project = await projectModel.create({
-            name,
-            id_admin
-        })
-
-
-        if (navers) {
-            const id_project = parseInt(project)
-            for (var index_navers = 0; index_navers < navers.length; index_navers++) {
-                await naverModel.createProjectNaver({
-                    id_naver: navers[index_navers],
-                    id_project,
+        const project = await Project
+            .query()
+            .insert({
+                    name,
+                    id_admin
                 })
-            }
-        }
 
         res.status(200).send(req.body)
 
@@ -56,8 +46,11 @@ exports.index = async(req, res) => {
     }
 
     try {
-        const projects = await projectModel.index(query)
-
+        const projects = await Project
+            .query()
+            .select('id', 'name')
+            .where(query)
+            
         if (projects.length == 0) {
             res.status(404).send({ message: "There aren't projects" })
             return
@@ -73,26 +66,18 @@ exports.show = async(req, res) => {
     const { id } = req.params
     const id_admin = req.loggedUser.user.id;
     try {
-        let project = await projectModel.show({
+        let project = await Project
+        .query()
+        .select('id', 'name')
+        .where({
             'id': id,
             'id_admin': id_admin
         })
+        .first()
 
         if (!project) {
             res.status(404).send({ message: "Project not found" })
             return
-        }
-
-        const naver_id = await projectModel.getNaverProject({ id_project: id })
-
-        if (naver_id) {
-
-            project.navers = []
-
-            for (var index_id = 0; index_id < naver_id.length; index_id++) {
-
-                project.navers.push(await naverModel.show({ id: naver_id[index_id].id_naver }))
-            }
         }
 
         res.status(200).send(project)
@@ -120,47 +105,19 @@ exports.update = async(req, res) => {
 
 
     try {
-        const project = await projectModel.update({
-            context: {
-                name,
+        const project = await Project
+            .query()
+            .where({
+                id: id,
                 id_admin
-            },
-            condition: {
-                id: id
-            }
-        })
-
-        const naversArr = await naverModel.showProject({ id_project: id })
-
-
-        const id_project = parseInt(project)
-
-        if (navers.length == naversArr.length) {
-
-            for (var index_navers = 0; index_navers < navers.length; index_navers++) {
-                await naverModel.updateProject({
-                    condition: {
-                        id_project: id_project
-                    },
-                    context: {
-                        id_naver: navers[index_navers],
-                        id_project,
-                    }
-                })
-            }
-        }
-
-        await naverModel.deleteNaversProject({ id_project: id })
-
-        for (var index_navers = 0; index_navers < navers.length; index_navers++) {
-            await naverModel.createProjectNaver({
-                id_naver: navers[index_navers],
-                id_project,
             })
-        }
+            .patch({
+                name
+                })
 
-        if (project.length == 0) {
-            throw error;
+        if (project == 0) {
+            res.status(404).send({ message: "Project not found" })
+
         }
 
         res.status(200).send(req.body);
@@ -180,10 +137,14 @@ exports.delete = async(req, res) => {
 
 
     try {
-        await projectModel.delete({
-            'id': id,
-            'id_admin': id_admin
-        })
+        await Project
+            .query()
+            .where({
+                'id': id,
+                'id_admin': id_admin
+            })
+            .delete()
+            
         res.send({ message: "Deleted" }).status(200)
 
     } catch (e) {
