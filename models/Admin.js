@@ -1,12 +1,13 @@
+const { Model } = require('objection')
 const db = require('../database/db')
 
+Model.knex(db)
 
-exports.create = async(data) => {
-    await db('admins').insert(data)
+class Admin extends Model {
+    static get tableName(){
+        return 'admins'
+    }
 }
 
-exports.checkUser = async(data) => {
-    return await db('admins')
-        .where(data)
-        .first()
-}
+
+module.exports = Admin

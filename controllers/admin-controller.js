@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const variables = require("../bin/configuration/variables")
 const validator = require("../bin/helpers/validator-service")
-const adminModel = require("../models/Admin")
+const Admin = require("../models/Admin")
 
 
 
@@ -18,7 +18,9 @@ exports.store = async(req, res) => {
         return;
     }
 
-    const userExists = await adminModel.checkUser({ email })
+    const userExists = await Admin.query()
+                            .where({email})
+                            .first()
 
     if (userExists) {
         return res.json({ message: "This email is already registered" }).status(204);
@@ -27,7 +29,8 @@ exports.store = async(req, res) => {
     password = await bcrypt.hash(password, 10)
 
     try {
-        adminModel.create({
+        await Admin.query()
+        .insert({
             email,
             password
         })
@@ -41,7 +44,9 @@ exports.store = async(req, res) => {
 exports.login = async(req, res) => {
     const { email, password } = req.body;
 
-    const user = await adminModel.checkUser({ email })
+    const user = await Admin.query()
+                            .where({ email })
+                            .first()
 
     if (!user) {
         res.status(400).send({ message: "User doesn't exists" })
