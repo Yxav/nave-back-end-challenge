@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const auth = require("../middlewares/authenticate")
-const validator = require("../bin/helpers/validator-service")
 const knex = require('knex')
 const Naver = require('../models/Naver')
 
@@ -8,19 +7,6 @@ exports.store = async(req, res) => {
 
     const { name, birthdate, admission_date, job_role, projects } = req.body;
     const id_admin = req.loggedUser.user.id;
-
-    let validate = new validator();
-
-    validate.isName(name);
-    validate.isDate(birthdate);
-    validate.isDate(admission_date);
-    validate.isString(job_role);
-
-
-    if (!validate.isValid()) {
-        res.status(400).send(validate.errors()).end();
-        return;
-    }
 
     try {
         const naver = await Naver
@@ -109,19 +95,7 @@ exports.update = async(req, res) => {
     const { name, birthdate, admission_date, job_role, projects } = req.body;
     const id_admin = req.loggedUser.user.id;
 
-    let validate = new validator();
-
-    validate.isName(name);
-    validate.isDate(birthdate);
-    validate.isDate(admission_date);
-    validate.isString(job_role);
-
-    if (!validate.isValid()) {
-        res.status(400).send(validate.errors()).end();
-
-        return;
-    }
-
+   
     try {
         const data = {
             content: {

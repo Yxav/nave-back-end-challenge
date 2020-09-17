@@ -1,22 +1,10 @@
-const validator = require("../bin/helpers/validator-service")
 const Project = require("../models/Project")
-
-
 
 
 exports.store = async(req, res) => {
 
     const { name, navers } = req.body;
     const id_admin = req.loggedUser.user.id;
-
-    let validate = new validator();
-
-    validate.isString(name);
-
-    if (!validate.isValid()) {
-        res.status(400).send(validate.errors()).end();
-        return;
-    }
 
     try {
         const project = await Project
@@ -93,17 +81,6 @@ exports.update = async(req, res) => {
     const { name, navers } = req.body;
     const id_admin = req.loggedUser.user.id;
 
-    let validate = new validator();
-
-    validate.isString(name);
-
-
-    if (!validate.isValid()) {
-        res.status(400).send(validate.errors()).end();
-        return;
-    }
-
-
     try {
         const project = await Project
             .query()
@@ -144,7 +121,7 @@ exports.delete = async(req, res) => {
                 'id_admin': id_admin
             })
             .delete()
-            
+
         res.send({ message: "Deleted" }).status(200)
 
     } catch (e) {

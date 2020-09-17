@@ -1,14 +1,18 @@
 const express = require('express')
 const router = express.Router()
+
 const naver = require('../controllers/naver-controller')
+const validator = require('../middlewares/validator')
 
 
+//routes with validation
+router.post('/naver/register', validator.naverRegister, naver.store)
+router.put('/naver/:id', validator.naverRegister, naver.update)
 
-
-router.post('/naver/register', naver.store)
-router.get('/naver/', naver.index)
 router.get('/naver/:id', naver.show)
-router.put('/naver/:id', naver.update)
 router.delete('/naver/:id', naver.delete)
+
+
+router.get('/naver/', naver.index)
 
 module.exports = router;

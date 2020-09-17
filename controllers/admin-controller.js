@@ -1,22 +1,11 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const variables = require("../bin/configuration/variables")
-const validator = require("../bin/helpers/validator-service")
 const Admin = require("../models/Admin")
-
 
 
 exports.store = async(req, res) => {
     let { email, password, confirm_password } = req.body;
-
-    let validate = new validator();
-
-    validate.isEmail(email);
-
-    if (!validate.isValid()) {
-        res.status(400).send(validate.errors()).end();
-        return;
-    }
 
     const userExists = await Admin.query()
                             .where({email})
