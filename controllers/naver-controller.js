@@ -16,6 +16,7 @@ exports.store = async(req, res) => {
                         birthdate,
                         admission_date,
                         job_role,
+                        projects,
                         id_admin
                 })
 
@@ -46,7 +47,7 @@ exports.index = async(req, res) => {
     try {
         const navers = await Naver
                 .query()
-                .select('id', 'name', 'birthdate', 'admission_date', 'job_role')
+                .select('id', 'name', 'birthdate', 'admission_date', 'job_role','projects')
                 .where(query)
 
         if (navers.length == 0) {
@@ -103,6 +104,7 @@ exports.update = async(req, res) => {
                 birthdate,
                 admission_date,
                 job_role,
+                projects,
             },
             id: {
                 'id': id,

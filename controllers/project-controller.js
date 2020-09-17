@@ -11,6 +11,7 @@ exports.store = async(req, res) => {
             .query()
             .insert({
                     name,
+                    navers,
                     id_admin
                 })
 
@@ -36,7 +37,7 @@ exports.index = async(req, res) => {
     try {
         const projects = await Project
             .query()
-            .select('id', 'name')
+            .select('id', 'name', 'navers')
             .where(query)
             
         if (projects.length == 0) {
@@ -86,6 +87,7 @@ exports.update = async(req, res) => {
             .query()
             .where({
                 id: id,
+                navers,
                 id_admin
             })
             .patch({
