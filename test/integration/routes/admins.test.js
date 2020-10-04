@@ -52,6 +52,11 @@ describe('Routes: Navers', () => {
                  password: '123teste'
              })
              expect(response.status).toEqual(200)
+             expect(response.type).toEqual('application/json')
+             expect(Object.keys(response.body)).toEqual(
+                expect.arrayContaining(['id', 'email'])
+              )
+              console.log(response.body)
          })
     })
 })
