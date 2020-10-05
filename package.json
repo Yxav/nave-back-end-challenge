@@ -4,8 +4,12 @@
     "description": "Nave backend challenge for job ",
     "main": "index.js",
     "scripts": {
-        "start": " node server.js",
-        "migrate_db": "knex migrate:latest"
+        "test:integration": "yarn jest test/integration --detectOpenHandles --watch",
+        "test:unit": "yarn jest test/unit --detectOpenHandles --watch",
+        "dev": "nodemon src/index.js --exec babel-node --inspect src/index.js",
+        "build": "babel src --out-dir dist",
+        "start": " yarn build && node dist/index.js",
+        "knex": "babel-node node_modules/.bin/knex --knexfile src/database/knexfile.js"
     },
     "keywords": [
         "nodejs",
@@ -17,14 +21,23 @@
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "dotenv": "^8.2.0",
-        "express": "^4.17.1",
-        "http": "0.0.1-security",
         "jsonwebtoken": "^8.5.1",
-        "knex": "^0.21.2",
-        "path": "^0.12.7",
-        "pg": "^8.3.0"
+        "knex": "^0.21.6",
+        "koa": "^2.13.0",
+        "koa-body": "^4.2.0",
+        "koa-router": "^9.4.0",
+        "objection": "^2.2.3",
+        "objection-visibility": "^1.1.0",
+        "pg": "^8.3.3"
     },
     "devDependencies": {
-        "nodemon": "^2.0.4"
+        "@babel/cli": "^7.11.6",
+        "@babel/core": "^7.11.6",
+        "@babel/node": "^7.10.5",
+        "@babel/preset-env": "^7.11.5",
+        "babel-plugin-module-resolver": "^4.0.0",
+        "jest": "^26.4.2",
+        "nodemon": "^2.0.4",
+        "supertest": "^5.0.0"
     }
 }

@@ -2,6 +2,9 @@ import request from 'supertest'
 import app from 'server'
 
 import { TestDatabase } from 'helpers'
+import AdminFactory from './factory/admin-factory'
+
+
 
 describe('Routes: Navers', () => {
     const defaultNaver = [
@@ -20,10 +23,11 @@ describe('Routes: Navers', () => {
             job_role: 'Desenvolvedor'
         }
     ]
-    global.server = app.listen()
     
     beforeEach(async ()=> {
         await TestDatabase.createDB()
+        global.server = app.listen()
+        global.admin = await AdminFactory()
     })
 
     afterEach(async () => {
@@ -32,31 +36,35 @@ describe('Routes: Navers', () => {
         
     })
 
-    // describe('GET / Admins', () => {
-    //     it('Shoud return a list of admins', done => {
-    //         const response = request(global.server)
-    //         .get('/v1/admins')
-    //         .end((err, res) => {
-    //             expect(res.body).toEqual(defaultNaver)
-    //             done(err)
-    //         })   
-    //     })
-    // })
-
-     describe('POST /Admins', ()=> {
-         it('Should create a new Admin', async() => {
-             const response = await request(global.server)
-             .post('/v1/admins')
-             .send({
-                 email: 'email@teste.com',
-                 password: '123teste'
-             })
-             expect(response.status).toEqual(200)
-             expect(response.type).toEqual('application/json')
-             expect(Object.keys(response.body)).toEqual(
+    describe('POST /Admins', ()=> {
+        it('Should create a new Admin', async() => {
+            const response = await request(global.server)
+            .post('/v1/admins')
+            .send({
+                email: 'email@teste.com',
+                password: '123teste'
+            })
+            expect(response.status).toEqual(200)
+            expect(response.type).toEqual('application/json')
+            expect(Object.keys(response.body)).toEqual(
                 expect.arrayContaining(['id', 'email'])
               )
-              console.log(response.body)
          })
+    })
+
+    describe('POST /Admins', ()=> {
+        it('Should login a Admin and return a token', async() => {
+            const response = await request(global.server)
+            .post('/v1/admins/login')
+            .send({
+                email: global.admin.email,
+                password: global.admin.password
+            })
+            expect(response.status).toEqual(200)
+            expect(response.type).toEqual('application/json')
+            expect(Object.keys(response.body)).toEqual(
+                expect.arrayContaining(['id', 'email', 'token'])
+                )
+        })
     })
 })

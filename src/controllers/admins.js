@@ -1,40 +1,45 @@
+import bcrypt from 'bcryptjs'
+
 import Admin from 'models/Admin'
 
+import { encryptPassword, generateToken } from 'helpers'
 
-
-export const index = ctx => {
-    return ctx.body = [
-        {
-            id: 1,
-            name: 'Fulano',
-            birthdate: '1999-05-15',
-            admission_date: '2020-06-12',
-            job_role: 'Desenvolvedor'
-        },
-        {
-            id: 2,
-            name: 'Ciclano',
-            birthdate: '1992-10-28',
-            admission_date: '2018-06-12',
-            job_role: 'Desenvolvedor'
-        }
-    ]
-}
-
-export const create = ctx => {
+export const create = async ctx => {
     const { body } = ctx.request
-    // console.log(body)
+    
+    
     return Admin.query().insert({
         email: body.email,
-        password: body.password
-    })
-
-    // console.log(response)
-    
+        password: await encryptPassword(body.password)
+    })   
 }
 
+export const login = async ctx => {
+    const { body } = ctx.request
+    const user = await Admin.query()
+      .findOne({email: body.email})
+      .catch(() => {
+          throw console.error("ops, error")
+      })
+
+    const validPassword = await bcrypt.compare(body.password, user.password)
+    if(!validPassword){
+        throw console.error('Ooops, invalid password')
+    }
+
+    const userParsed = user.toJSON()
+    
+    return { 
+        ...userParsed,
+        token : generateToken({
+            id: userParsed.id,
+            email: userParsed.email
+        })
+    }
+
+}
 
 export default { 
-    index,
-    create
+    create,
+    login
  }

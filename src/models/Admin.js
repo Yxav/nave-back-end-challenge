@@ -14,8 +14,8 @@ class Admin extends mixin (Model, visibility) {
     static get tableName() {
         return 'admins'
     }
-    static get visible() {
-        return ['id', 'email']
+    static get hidden() {
+        return ['password']
       }
 
 }

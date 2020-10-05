@@ -2,8 +2,13 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,linux
 
+## Todo
+*.todo
+
 ### Linux ###
 *~
+
+*.lock
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*

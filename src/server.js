@@ -1,30 +1,19 @@
 import Koa from 'koa'
 import Router from 'koa-router'
+import koaBody from 'koa-body'
+
+import router from 'routes'
 
 const app = new Koa()
-const router = new Router()
 
+app.use(koaBody({ multipart: true }))
 
-router.get('/', (ctx, next) => ctx.body = 'Opaa')
-
-router.get('/navers', (ctx, next) => ctx.body = [
-    {
-        id: 1,
-        name: 'Fulano',
-        birthdate: '1999-05-15',
-        admission_date: '2020-06-12',
-        job_role: 'Desenvolvedor'
-    },
-    {
-        id: 2,
-        name: 'Ciclano',
-        birthdate: '1992-10-28',
-        admission_date: '2018-06-12',
-        job_role: 'Desenvolvedor'
-    }
-])
+app.use(async (ctx, next) => {
+    ctx.body = await next()   
+  })
 
 
 app.use(router.routes())
+app.use(router.allowedMethods())
 
 export default app

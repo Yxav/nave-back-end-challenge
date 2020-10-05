@@ -1,25 +1,16 @@
-import NaversController from 'controllers/navers'
+import AdminsController from 'controllers/admins'
 
-describe(' Controllers: navers', () => {
-    const defaultNaver = [
+describe(' Controllers: admins', () => {
+    const defaultAdmin = [
         {
             id: 1,
-            name: 'Fulano',
-            birthdate: '1999-05-15',
-            admission_date: '2020-06-12',
-            job_role: 'Desenvolvedor'
-        },
-        {
-            id: 2,
-            name: 'Ciclano',
-            birthdate: '1992-10-28',
-            admission_date: '2018-06-12',
-            job_role: 'Desenvolvedor'
+            email: 'teste@teste.com',
         }
-    ]
-    describe(' get() Navers', () => {
-        it('Should return a list of navers', () => {
-            expect(NaversController.index()).toEqual(defaultNaver)
+        ]
+    describe(' get() Admins', () => {
+        it('Should create a admin', () => {
+            
+            expect(AdminsController.create()).toEqual(defaultAdmin)
         })
     })
 })

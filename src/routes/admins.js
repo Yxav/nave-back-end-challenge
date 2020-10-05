@@ -3,8 +3,8 @@ import AdminController from 'controllers/admins'
 
 const router = new Router()
 
-router.get('/admins', AdminController.index)
 
 router.post('/admins', AdminController.create)
+router.post('/admins/login', AdminController.login)
 
 export default router.routes()
